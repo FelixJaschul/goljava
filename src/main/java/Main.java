@@ -61,6 +61,7 @@ public class Main {
         for (int y = 0; y < HEIGHT; y++) {
             for (int x = 0; x < WIDTH; x++) {
                 int neighbors = 0;
+
                 for (int dy = -1; dy <= 1; dy++) {
                     for (int dx = -1; dx <= 1; dx++) {
                         if (dx != 0 || dy != 0) {
@@ -92,7 +93,7 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        // Initialize grid with a glider pattern
+        // Initialize with a simple pattern (glider)
         state.grid[1][2] = 1;
         state.grid[2][3] = 1;
         state.grid[3][1] = 1;
