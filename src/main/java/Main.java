@@ -1,9 +1,7 @@
-import io.github.libsdl4j.api.*;
 import io.github.libsdl4j.api.event.*;
 import io.github.libsdl4j.api.render.*;
 import io.github.libsdl4j.api.video.*;
 import io.github.libsdl4j.api.rect.*;
-import io.github.libsdl4j.api.timer.*;
 
 import static io.github.libsdl4j.api.Sdl.*;
 import static io.github.libsdl4j.api.event.SDL_EventType.*;
@@ -86,9 +84,7 @@ public class Main {
         }
 
         for (int y = 0; y < HEIGHT; y++) {
-            for (int x = 0; x < WIDTH; x++) {
-                state.grid[y][x] = newGrid[y][x];
-            }
+            System.arraycopy(newGrid[y], 0, state.grid[y], 0, WIDTH);
         }
     }
 
