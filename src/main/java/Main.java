@@ -108,7 +108,7 @@ public class Main {
         State.window = SDL_CreateWindow("Game of Life", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIDTH * CELL_SIZE, HEIGHT * CELL_SIZE, SDL_WINDOW_SHOWN);
         State.renderer = SDL_CreateRenderer(State.window, -1, SDL_RENDERER_ACCELERATED);
         State.running = true;
-        State.paused = false;
+        State.paused = true;
     }
 
     private static void deinit() {
@@ -130,9 +130,22 @@ public class Main {
         SDL_Event ev = new SDL_Event();
         while (State.running) {
             while (SDL_PollEvent(ev) != 0) {
-                if (ev.type == SDL_QUIT) State.running = false;
-                if (ev.type == SDL_MOUSEBUTTONDOWN) State.grid[State.Mouse.y][State.Mouse.x] = 1;
-                if (ev.type == SDL_KEYDOWN && ev.key.keysym.sym == SDLK_SPACE) {State.paused = !State.paused; System.out.println("PAUSED"); }
+                switch (ev.type) {
+                    case SDL_QUIT:
+                        State.running = false;
+                        break;
+                    case SDL_MOUSEBUTTONDOWN:
+                        if (State.grid[State.Mouse.y][State.Mouse.x] == 1) State.grid[State.Mouse.y][State.Mouse.x] = 0;
+                        else State.grid[State.Mouse.y][State.Mouse.x] = 1;
+                        break;
+                    case SDL_KEYDOWN:
+                        switch (ev.key.keysym.sym) {
+                            case SDLK_SPACE:
+                                State.paused = !State.paused;
+                                System.out.println("PAUSED");
+                                break;
+                        }
+                }
             }
 
             renderGrid();
