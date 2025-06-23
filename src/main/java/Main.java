@@ -32,6 +32,26 @@ public class Main {
 
     private static final State state = new State();
 
+    private static int getNeighbors(int y, int x) {
+        int neighbors = 0;
+
+        for (int dy = -1; dy <= 1; dy++) {
+            for (int dx = -1; dx <= 1; dx++) {
+                if (dx != 0 || dy != 0) {
+                    int ny = y + dy;
+                    int nx = x + dx;
+                    if (ny >= 0
+                            && ny < HEIGHT
+                            && nx >= 0
+                            && nx < WIDTH) {
+                        neighbors += state.grid[ny][nx];
+                    }
+                }
+            }
+        }
+        return neighbors;
+    }
+
     private static void renderGrid() {
         for (int y = 0; y < HEIGHT; y++) {
             for (int x = 0; x < WIDTH; x++) {
@@ -58,22 +78,7 @@ public class Main {
 
         for (int y = 0; y < HEIGHT; y++) {
             for (int x = 0; x < WIDTH; x++) {
-                int neighbors = 0;
-
-                for (int dy = -1; dy <= 1; dy++) {
-                    for (int dx = -1; dx <= 1; dx++) {
-                        if (dx != 0 || dy != 0) {
-                            int ny = y + dy;
-                            int nx = x + dx;
-                            if (ny >= 0
-                                    && ny < HEIGHT
-                                    && nx >= 0
-                                    && nx < WIDTH) {
-                                neighbors += state.grid[ny][nx];
-                            }
-                        }
-                    }
-                }
+                int neighbors = getNeighbors(y, x);
 
                 // Apply Conway's Game of Life rules
                 // 1. Any live cell with 2 or 3 live neighbors survives
