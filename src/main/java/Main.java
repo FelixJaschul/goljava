@@ -110,12 +110,20 @@ public class Main {
         State.running = true;
         State.paused = true;
 
-        // Initialize with a simple pattern (glider)
-        State.grid[1][2] =
-            State.grid[2][3] =
-                State.grid[3][1] =
-                    State.grid[3][2] =
-                        State.grid[3][3] = 1;
+        // Initialize with a simple pattern (ship)
+        State.grid[16][33] =
+                State.grid[17][33] =
+                        State.grid[18][33] =
+                                State.grid[19][33] =
+                State.grid[17][34] =
+                        State.grid[18][34] =
+                                State.grid[19][34] =
+                State.grid[17][35] =
+                        State.grid[18][35] =
+                                 State.grid[19][35] =
+                State.grid[17][36] =
+                        State.grid[18][36] =
+                                 State.grid[19][36] = 1;
     }
 
     private static void deinit() {
