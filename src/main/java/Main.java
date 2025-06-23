@@ -17,19 +17,19 @@ import static io.github.libsdl4j.api.video.SdlVideo.*;
 import static io.github.libsdl4j.api.video.SdlVideoConst.*;
 
 public class Main {
-    private static final int WIDTH = 80;
-    private static final int HEIGHT = 40;
-    private static final int CELL_SIZE = 20;
+    static final int WIDTH = 80;
+    static final int HEIGHT = 40;
+    static final int CELL_SIZE = 20;
 
-    private static class State {
-        private static SDL_Window window;
-        private static SDL_Renderer renderer;
-        private static int[][] grid;
-        private static boolean running;
-        private static boolean paused;
+    static class State {
+        static SDL_Window window;
+        static SDL_Renderer renderer;
+        static int[][] grid;
+        static boolean running;
+        static boolean paused;
 
         static class Mouse {
-            private static int x, y;
+            static int x, y;
         }
     }
 
