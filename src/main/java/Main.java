@@ -112,18 +112,18 @@ public class Main {
 
         // Initialize with a simple pattern (ship)
         State.grid[16][33] =
-                State.grid[17][33] =
-                        State.grid[18][33] =
-                                State.grid[19][33] =
-                State.grid[17][34] =
-                        State.grid[18][34] =
-                                State.grid[19][34] =
-                State.grid[17][35] =
-                        State.grid[18][35] =
-                                 State.grid[19][35] =
-                State.grid[17][36] =
-                        State.grid[18][36] =
-                                 State.grid[19][36] = 1;
+            State.grid[17][33] =
+                State.grid[18][33] =
+                    State.grid[19][33] =
+            State.grid[17][34] =
+                State.grid[18][34] =
+                    State.grid[19][34] =
+            State.grid[17][35] =
+                State.grid[18][35] =
+                     State.grid[19][35] =
+            State.grid[17][36] =
+                State.grid[18][36] =
+                     State.grid[19][36] = 1;
     }
 
     private static void deinit() {
