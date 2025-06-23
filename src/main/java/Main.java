@@ -109,6 +109,13 @@ public class Main {
         State.renderer = SDL_CreateRenderer(State.window, -1, SDL_RENDERER_ACCELERATED);
         State.running = true;
         State.paused = true;
+
+        // Initialize with a simple pattern (glider)
+        State.grid[1][2] =
+            State.grid[2][3] =
+                State.grid[3][1] =
+                    State.grid[3][2] =
+                        State.grid[3][3] = 1;
     }
 
     private static void deinit() {
@@ -120,13 +127,6 @@ public class Main {
 
     public static void main(String[] args) {
         init();
-        // Initialize with a simple pattern (glider)
-        State.grid[1][2] = 1;
-        State.grid[2][3] = 1;
-        State.grid[3][1] = 1;
-        State.grid[3][2] = 1;
-        State.grid[3][3] = 1;
-
         while (State.running) {
             SDL_Event ev = new SDL_Event();
             while (SDL_PollEvent(ev) != 0) {
@@ -155,7 +155,6 @@ public class Main {
 
             System.out.printf("MOUSE POS: %d / %d \n", State.Mouse.x, State.Mouse.y);
         }
-
         deinit();
     }
 }
