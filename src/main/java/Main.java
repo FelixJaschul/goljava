@@ -144,6 +144,12 @@ public class Main {
                                 State.paused = !State.paused;
                                 System.out.println("PAUSED");
                                 break;
+                            case SDLK_RETURN:
+                                State.paused = !State.paused;
+                                updateGrid();
+                                System.out.print("UPDATED ONCE");
+                                State.paused = !State.paused;
+                                break;
                         }
                 }
             }
