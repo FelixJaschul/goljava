@@ -2,10 +2,13 @@ import io.github.libsdl4j.api.event.*;
 import io.github.libsdl4j.api.render.*;
 import io.github.libsdl4j.api.video.*;
 import io.github.libsdl4j.api.rect.*;
+import com.sun.jna.ptr.IntByReference;
 
 import static io.github.libsdl4j.api.Sdl.*;
 import static io.github.libsdl4j.api.event.SDL_EventType.*;
 import static io.github.libsdl4j.api.event.SdlEvents.*;
+import static io.github.libsdl4j.api.keycode.SDL_Keycode.*;
+import static io.github.libsdl4j.api.mouse.SdlMouse.*;
 import static io.github.libsdl4j.api.render.SDL_RendererFlags.*;
 import static io.github.libsdl4j.api.render.SdlRender.*;
 import static io.github.libsdl4j.api.timer.SdlTimer.*;
@@ -23,10 +26,18 @@ public class Main {
         SDL_Renderer renderer;
         int[][] grid;
         boolean running;
+        boolean paused;
+
+        public static final Mouse mouse = new Mouse();
 
         State() {
             grid = new int[HEIGHT][WIDTH];
             running = true;
+            paused = false;
+        }
+
+        static class Mouse {
+            int x, y;
         }
     }
 
@@ -88,7 +99,15 @@ public class Main {
             }
         }
 
+        // Update mouse pos
+        IntByReference mx = new IntByReference();
+        IntByReference my = new IntByReference();
+        SDL_GetMouseState(mx, my);
+        state.mouse.y = my.getValue() / CELL_SIZE;
+        state.mouse.x = mx.getValue() / CELL_SIZE;
+
         // Paste updated grid into viewable grid
+        if (state.paused) return;
         for (int y = 0; y < HEIGHT; y++) {
             System.arraycopy(newGrid[y], 0, state.grid[y], 0, WIDTH);
         }
@@ -105,18 +124,20 @@ public class Main {
         state.window = SDL_CreateWindow("Game of Life", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIDTH * CELL_SIZE, HEIGHT * CELL_SIZE, SDL_WINDOW_SHOWN);
         state.renderer = SDL_CreateRenderer(state.window, -1, SDL_RENDERER_ACCELERATED);
 
-        SDL_Event evt = new SDL_Event();
+        SDL_Event ev = new SDL_Event();
         while (state.running) {
-            while (SDL_PollEvent(evt) != 0) {
-                if (evt.type == SDL_QUIT) {
-                    state.running = false;
-                }
+            while (SDL_PollEvent(ev) != 0) {
+                if (ev.type == SDL_QUIT) state.running = false;
+                if (ev.type == SDL_MOUSEBUTTONDOWN) state.grid[state.mouse.y][state.mouse.x] = 1;
+                if (ev.type == SDL_KEYDOWN && ev.key.keysym.sym == SDLK_SPACE) {state.paused = !state.paused; System.out.println("PAUSED"); };
             }
 
             renderGrid();
             SDL_RenderPresent(state.renderer);
             SDL_Delay(200);
             updateGrid();
+
+            System.out.printf("MOUSE POS: %d / %d \n", state.mouse.x, state.mouse.y);
         }
 
         // Clean up
