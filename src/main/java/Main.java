@@ -132,7 +132,7 @@ public class Main {
             while (SDL_PollEvent(ev) != 0) {
                 if (ev.type == SDL_QUIT) State.running = false;
                 if (ev.type == SDL_MOUSEBUTTONDOWN) State.grid[State.Mouse.y][State.Mouse.x] = 1;
-                if (ev.type == SDL_KEYDOWN && ev.key.keysym.sym == SDLK_SPACE) {State.paused = !State.paused; System.out.println("PAUSED"); };
+                if (ev.type == SDL_KEYDOWN && ev.key.keysym.sym == SDLK_SPACE) {State.paused = !State.paused; System.out.println("PAUSED"); }
             }
 
             renderGrid();
