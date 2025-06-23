@@ -88,6 +88,7 @@ public class Main {
             }
         }
 
+        // Paste updated grid into viewable grid
         for (int y = 0; y < HEIGHT; y++) {
             System.arraycopy(newGrid[y], 0, state.grid[y], 0, WIDTH);
         }
