@@ -22,26 +22,16 @@ public class Main {
     private static final int CELL_SIZE = 20;
 
     private static class State {
-        SDL_Window window;
-        SDL_Renderer renderer;
-        int[][] grid;
-        boolean running;
-        boolean paused;
-
-        public static final Mouse mouse = new Mouse();
-
-        State() {
-            grid = new int[HEIGHT][WIDTH];
-            running = true;
-            paused = false;
-        }
+        private static SDL_Window window;
+        private static SDL_Renderer renderer;
+        private static int[][] grid;
+        private static boolean running;
+        private static boolean paused;
 
         static class Mouse {
-            int x, y;
+            private static int x, y;
         }
     }
-
-    private static final State state = new State();
 
     private static int getNeighbors(int y, int x) {
         int neighbors = 0;
@@ -55,7 +45,7 @@ public class Main {
                             && ny < HEIGHT
                             && nx >= 0
                             && nx < WIDTH) {
-                        neighbors += state.grid[ny][nx];
+                        neighbors += State.grid[ny][nx];
                     }
                 }
             }
@@ -72,14 +62,14 @@ public class Main {
                 cell.w = CELL_SIZE;
                 cell.h = CELL_SIZE;
 
-                if (state.grid[y][x] == 1)
-                    SDL_SetRenderDrawColor(state.renderer, (byte) 0, (byte) 150, (byte) 0, (byte) 255);
+                if (State.grid[y][x] == 1)
+                    SDL_SetRenderDrawColor(State.renderer, (byte) 0, (byte) 150, (byte) 0, (byte) 255);
                 else if ((x + y) % 2 == 1)
-                    SDL_SetRenderDrawColor(state.renderer, (byte) 20, (byte) 20, (byte) 20, (byte) 255);
+                    SDL_SetRenderDrawColor(State.renderer, (byte) 20, (byte) 20, (byte) 20, (byte) 255);
                 else
-                    SDL_SetRenderDrawColor(state.renderer, (byte) 0, (byte) 0, (byte) 0, (byte) 255);
+                    SDL_SetRenderDrawColor(State.renderer, (byte) 0, (byte) 0, (byte) 0, (byte) 255);
 
-                SDL_RenderFillRect(state.renderer, cell);
+                SDL_RenderFillRect(State.renderer, cell);
             }
         }
     }
@@ -95,7 +85,7 @@ public class Main {
                 // 1. Any live cell with 2 or 3 live neighbors survives
                 // 2. Any dead cell with exactly 3 live neighbors becomes alive
                 // 3. All other cells die or stay dead
-                newGrid[y][x] = (neighbors == 3 || (state.grid[y][x] == 1 && neighbors == 2)) ? 1 : 0;
+                newGrid[y][x] = (neighbors == 3 || (State.grid[y][x] == 1 && neighbors == 2)) ? 1 : 0;
             }
         }
 
@@ -103,46 +93,56 @@ public class Main {
         IntByReference mx = new IntByReference();
         IntByReference my = new IntByReference();
         SDL_GetMouseState(mx, my);
-        state.mouse.y = my.getValue() / CELL_SIZE;
-        state.mouse.x = mx.getValue() / CELL_SIZE;
+        State.Mouse.y = my.getValue() / CELL_SIZE;
+        State.Mouse.x = mx.getValue() / CELL_SIZE;
 
         // Paste updated grid into viewable grid
-        if (state.paused) return;
+        if (State.paused) return;
         for (int y = 0; y < HEIGHT; y++) {
-            System.arraycopy(newGrid[y], 0, state.grid[y], 0, WIDTH);
+            System.arraycopy(newGrid[y], 0, State.grid[y], 0, WIDTH);
         }
     }
 
-    public static void main(String[] args) {
-        // Initialize with a simple pattern (glider)
-        state.grid[1][2] = 1;
-        state.grid[2][3] = 1;
-        state.grid[3][1] = 1;
-        state.grid[3][2] = 1;
-        state.grid[3][3] = 1;
+    private static void init() {
+        State.grid = new int[HEIGHT][WIDTH];
+        State.window = SDL_CreateWindow("Game of Life", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIDTH * CELL_SIZE, HEIGHT * CELL_SIZE, SDL_WINDOW_SHOWN);
+        State.renderer = SDL_CreateRenderer(State.window, -1, SDL_RENDERER_ACCELERATED);
+        State.running = true;
+        State.paused = false;
+    }
 
-        state.window = SDL_CreateWindow("Game of Life", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIDTH * CELL_SIZE, HEIGHT * CELL_SIZE, SDL_WINDOW_SHOWN);
-        state.renderer = SDL_CreateRenderer(state.window, -1, SDL_RENDERER_ACCELERATED);
+    private static void deinit() {
+        // Clean up
+        SDL_DestroyRenderer(State.renderer);
+        SDL_DestroyWindow(State.window);
+        SDL_Quit();
+    }
+
+    public static void main(String[] args) {
+        init();
+        // Initialize with a simple pattern (glider)
+        State.grid[1][2] = 1;
+        State.grid[2][3] = 1;
+        State.grid[3][1] = 1;
+        State.grid[3][2] = 1;
+        State.grid[3][3] = 1;
 
         SDL_Event ev = new SDL_Event();
-        while (state.running) {
+        while (State.running) {
             while (SDL_PollEvent(ev) != 0) {
-                if (ev.type == SDL_QUIT) state.running = false;
-                if (ev.type == SDL_MOUSEBUTTONDOWN) state.grid[state.mouse.y][state.mouse.x] = 1;
-                if (ev.type == SDL_KEYDOWN && ev.key.keysym.sym == SDLK_SPACE) {state.paused = !state.paused; System.out.println("PAUSED"); };
+                if (ev.type == SDL_QUIT) State.running = false;
+                if (ev.type == SDL_MOUSEBUTTONDOWN) State.grid[State.Mouse.y][State.Mouse.x] = 1;
+                if (ev.type == SDL_KEYDOWN && ev.key.keysym.sym == SDLK_SPACE) {State.paused = !State.paused; System.out.println("PAUSED"); };
             }
 
             renderGrid();
-            SDL_RenderPresent(state.renderer);
+            SDL_RenderPresent(State.renderer);
             SDL_Delay(200);
             updateGrid();
 
-            System.out.printf("MOUSE POS: %d / %d \n", state.mouse.x, state.mouse.y);
+            System.out.printf("MOUSE POS: %d / %d \n", State.Mouse.x, State.Mouse.y);
         }
 
-        // Clean up
-        SDL_DestroyRenderer(state.renderer);
-        SDL_DestroyWindow(state.window);
-        SDL_Quit();
+        deinit();
     }
 }
