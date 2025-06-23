@@ -127,8 +127,8 @@ public class Main {
         State.grid[3][2] = 1;
         State.grid[3][3] = 1;
 
-        SDL_Event ev = new SDL_Event();
         while (State.running) {
+            SDL_Event ev = new SDL_Event();
             while (SDL_PollEvent(ev) != 0) {
                 switch (ev.type) {
                     case SDL_QUIT:
