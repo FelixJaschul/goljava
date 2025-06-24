@@ -33,7 +33,7 @@ public class Main {
         }
     }
 
-    private static int getNeighbors(int y, int x) {
+    static int getNeighbors(int y, int x) {
         int neighbors = 0;
 
         for (int dy = -1; dy <= 1; dy++) {
@@ -53,7 +53,7 @@ public class Main {
         return neighbors;
     }
 
-    private static void renderGrid() {
+    static void renderGrid() {
         for (int y = 0; y < HEIGHT; y++) {
             for (int x = 0; x < WIDTH; x++) {
                 SDL_Rect cell = new SDL_Rect();
@@ -74,7 +74,7 @@ public class Main {
         }
     }
 
-    private static void updateGrid() {
+    static void updateGrid() {
         int[][] newGrid = new int[HEIGHT][WIDTH];
 
         for (int y = 0; y < HEIGHT; y++) {
@@ -103,30 +103,45 @@ public class Main {
         }
     }
 
-    private static void init() {
+    static void spawn_ship() {
+        int x = State.Mouse.x;
+        int y = State.Mouse.y;
+
+        State.grid[y][x] =
+        State.grid[y + 1][x] =
+        State.grid[y + 2][x] =
+        State.grid[y + 3][x] =
+        State.grid[y + 1][x + 1] =
+        State.grid[y + 2][x + 1] =
+        State.grid[y + 3][x + 1] =
+        State.grid[y + 1][x + 2] =
+        State.grid[y + 2][x + 2] =
+        State.grid[y + 3][x + 2] =
+        State.grid[y + 1][x + 3] =
+        State.grid[y + 2][x + 3] =
+        State.grid[y + 3][x + 3] = 1;
+    }
+
+    static void spawn_glider() {
+        int x = State.Mouse.x;
+        int y = State.Mouse.y;
+
+        State.grid[y][x] =
+        State.grid[y + 1][x + 1] =
+        State.grid[y + 2][x - 1] =
+        State.grid[y + 2][x] =
+        State.grid[y + 2][x + 1] = 1;
+    }
+
+    static void init() {
         State.grid = new int[HEIGHT][WIDTH];
         State.window = SDL_CreateWindow("Game of Life", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIDTH * CELL_SIZE, HEIGHT * CELL_SIZE, SDL_WINDOW_SHOWN);
         State.renderer = SDL_CreateRenderer(State.window, -1, SDL_RENDERER_ACCELERATED);
         State.running = true;
         State.paused = true;
-
-        // Initialize with a simple pattern (ship)
-        State.grid[16][33] =
-            State.grid[17][33] =
-                State.grid[18][33] =
-                    State.grid[19][33] =
-            State.grid[17][34] =
-                State.grid[18][34] =
-                    State.grid[19][34] =
-            State.grid[17][35] =
-                State.grid[18][35] =
-                     State.grid[19][35] =
-            State.grid[17][36] =
-                State.grid[18][36] =
-                     State.grid[19][36] = 1;
     }
 
-    private static void deinit() {
+    static void deinit() {
         // Clean up
         SDL_DestroyRenderer(State.renderer);
         SDL_DestroyWindow(State.window);
@@ -139,26 +154,36 @@ public class Main {
             SDL_Event ev = new SDL_Event();
             while (SDL_PollEvent(ev) != 0) {
                 switch (ev.type) {
-                    case SDL_QUIT:
-                        State.running = false;
+                case SDL_QUIT:
+                    State.running = false;
+                    break;
+                case SDL_MOUSEBUTTONDOWN:
+                    if (State.grid[State.Mouse.y][State.Mouse.x] == 1) State.grid[State.Mouse.y][State.Mouse.x] = 0;
+                    else State.grid[State.Mouse.y][State.Mouse.x] = 1;
+                    break;
+                case SDL_KEYDOWN:
+                    switch (ev.key.keysym.sym) {
+                    case SDLK_SPACE:
+                        State.paused = !State.paused;
+                        System.out.println("PAUSED");
                         break;
-                    case SDL_MOUSEBUTTONDOWN:
-                        if (State.grid[State.Mouse.y][State.Mouse.x] == 1) State.grid[State.Mouse.y][State.Mouse.x] = 0;
-                        else State.grid[State.Mouse.y][State.Mouse.x] = 1;
+                    case SDLK_RETURN:
+                        State.paused = !State.paused;
+                        updateGrid();
+                        System.out.print("UPDATED ONCE");
+                        State.paused = !State.paused;
                         break;
-                    case SDL_KEYDOWN:
-                        switch (ev.key.keysym.sym) {
-                            case SDLK_SPACE:
-                                State.paused = !State.paused;
-                                System.out.println("PAUSED");
-                                break;
-                            case SDLK_RETURN:
-                                State.paused = !State.paused;
-                                updateGrid();
-                                System.out.print("UPDATED ONCE");
-                                State.paused = !State.paused;
-                                break;
-                        }
+                    case SDLK_BACKSPACE:
+                        State.grid = new int[HEIGHT][WIDTH];
+                        System.out.print("DELETED");
+                        break;
+                    case SDLK_S:
+                        spawn_ship();
+                        break;
+                    case SDLK_G:
+                        spawn_glider();
+                        break;
+                    }
                 }
             }
 
