@@ -105,20 +105,22 @@ public class Main {
     }
 
     static void spawn_ship() {
-        State.grid[State.Mouse.y][State.Mouse.x] = 1;
+        int my = State.Mouse.y, mx = State.Mouse.x;
+        State.grid[my][mx] = 1;
         for (int dy = 1; dy < 4; dy++) {
             for (int dx = 0; dx < 4; dx++) {
-                State.grid[State.Mouse.y + dy][State.Mouse.x + dx] = 1;
+                State.grid[mx + dy][mx + dx] = 1;
             }
         }
     }
 
     static void spawn_glider() {
-        State.grid[State.Mouse.y][State.Mouse.x] =
-        State.grid[State.Mouse.y + 1][State.Mouse.x + 1] =
-        State.grid[State.Mouse.y + 2][State.Mouse.x - 1] =
-        State.grid[State.Mouse.y + 2][State.Mouse.x] =
-        State.grid[State.Mouse.y + 2][State.Mouse.x + 1] = 1;
+        int my = State.Mouse.y, mx = State.Mouse.x;
+        State.grid[my][mx] =
+        State.grid[my + 1][mx + 1] =
+        State.grid[my + 2][mx - 1] =
+        State.grid[my + 2][mx] =
+        State.grid[my + 2][mx + 1] = 1;
     }
 
     static void handle_events() {
@@ -126,36 +128,26 @@ public class Main {
         while (SDL_PollEvent(ev) != 0) {
             switch (ev.type) {
             case SDL_QUIT:
-                State.running = false;
-                break;
+                State.running = !State.running; break;
+
             case SDL_MOUSEBUTTONDOWN:
-                if (State.grid[State.Mouse.y][State.Mouse.x] == 1) State.grid[State.Mouse.y][State.Mouse.x] = 0;
-                else State.grid[State.Mouse.y][State.Mouse.x] = 1;
-                break;
+                int my = State.Mouse.y, mx = State.Mouse.x;
+                State.grid[my][mx] = State.grid[my][mx] == 1 ? 0 : 1; break;
+
             case SDL_KEYDOWN:
                 switch (ev.key.keysym.sym) {
                 case SDLK_SPACE:
-                    State.paused = !State.paused;
-                    // System.out.println("PAUSED");
-                    break;
+                    State.paused = !State.paused; break;
                 case SDLK_RETURN:
                     State.paused = !State.paused;
                     updateGrid();
-                    // System.out.print("UPDATED ONCE");
-                    State.paused = !State.paused;
-                    break;
+                    State.paused = !State.paused; break;
                 case SDLK_BACKSPACE:
-                    State.grid = new int[HEIGHT][WIDTH];
-                    // System.out.print("DELETED");
-                    break;
+                    State.grid = new int[HEIGHT][WIDTH]; break;
                 case SDLK_S:
-                    spawn_ship();
-                    // System.out.println("SPAWNED SHIP");
-                    break;
+                    spawn_ship(); break;
                 case SDLK_G:
-                    spawn_glider();
-                    // System.out.println("SPAWNED GLIDER");
-                    break;
+                    spawn_glider(); break;
                 }
             }
         }
