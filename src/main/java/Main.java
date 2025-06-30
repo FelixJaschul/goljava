@@ -136,18 +136,18 @@ public class Main {
 
             case SDL_KEYDOWN:
                 switch (ev.key.keysym.sym) {
-                case SDLK_SPACE:
-                    State.paused = !State.paused; break;
-                case SDLK_RETURN:
-                    State.paused = !State.paused;
-                    updateGrid();
-                    State.paused = !State.paused; break;
-                case SDLK_BACKSPACE:
-                    State.grid = new int[HEIGHT][WIDTH]; break;
-                case SDLK_S:
-                    spawn_ship(); break;
-                case SDLK_G:
-                    spawn_glider(); break;
+                    case SDLK_SPACE:
+                        State.paused = !State.paused; break;
+                    case SDLK_RETURN:
+                        State.paused = !State.paused;
+                        updateGrid();
+                        State.paused = !State.paused; break;
+                    case SDLK_BACKSPACE:
+                        State.grid = new int[HEIGHT][WIDTH]; break;
+                    case SDLK_S:
+                        spawn_ship(); break;
+                    case SDLK_G:
+                        spawn_glider(); break;
                 }
             }
         }
